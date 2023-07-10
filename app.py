@@ -73,7 +73,7 @@ def save_employees():
         # university=request.form.get("university")
 
         # values=(30498,3,"Headphones","Nakuru")
-
+        connection=pymysql.connect(host="localhost",user="root",password="",database="maxwell")
         # define the sql query
         sql='insert into employees(name,email,course,university) values(%s,%s,%s,%s)'
         # sql_orders='insert into orders(order_id,user_id,order_name,destination) values(%s,%s,%s,%s)'
@@ -92,7 +92,6 @@ def save_employees():
         
     else:
         return render_template("employees.html",message="Enter records to save employee")
-
 
 
 
