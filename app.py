@@ -8,7 +8,7 @@ import mysql.connector
 app=Flask(__name__)
 # temporary memory to store records
 users=[]
-
+connection=pymysql.connect(host="localhost",user="root",password="",database="maxwell")
 # routing -creating flask routes/pages
 # main route
 @app.route("/")
@@ -71,27 +71,78 @@ def save_employees():
         course=request.form['course']
         university=request.form['university']
         # university=request.form.get("university")
-
-        # values=(30498,3,"Headphones","Nakuru")
-        connection=pymysql.connect(host="localhost",user="root",password="",database="maxwell")
-        # define the sql query
-        sql='insert into employees(name,email,course,university) values(%s,%s,%s,%s)'
-        # sql_orders='insert into orders(order_id,user_id,order_name,destination) values(%s,%s,%s,%s)'
-        # create cursor - used to execute the sql query
-        cursor=connection.cursor() #function
-        # execute sql
-        cursor.execute(sql,(name,email,course,university))
-        # cursor.execute(sql_orders,values)
-
-        # commit the changes to the database
-        connection.commit()
-        print("saved successfuly")
-        # close the cursor
-        cursor.close()
-        return render_template("employees.html",response="Employee Saved Successfuly")
         
+        # Input validation
+        if not name or not email or not course or not university:
+            return render_template("employees.html",message="Please fill in all the records")
+        # check if username has two words
+        if " " not in name:
+            return render_template("employees.html",message="name must be two words")
+        # check if employee exists
+        sql ='select * from employees where email=%s'
+        cursor=connection.cursor()
+        cursor.execute(sql,email)
+        if cursor.rowcount==1:
+            return render_template("employees.html",message="User already exists. Use a different email address or login")
+        else:  
+            # values=(30498,3,"Headphones","Nakuru")
+            connection=pymysql.connect(host="localhost",user="root",password="",database="maxwell")
+            # define the sql query
+            sql='insert into employees(name,email,course,university) values(%s,%s,%s,%s)'
+            # sql_orders='insert into orders(order_id,user_id,order_name,destination) values(%s,%s,%s,%s)'
+            # create cursor - used to execute the sql query
+            cursor=connection.cursor() #function
+            # execute sql
+            cursor.execute(sql,(name,email,course,university))
+            # cursor.execute(sql_orders,values)
+
+            # commit the changes to the database
+            connection.commit()
+            print("saved successfuly")
+            # close the cursor
+            cursor.close()
+            return render_template("employees.html",response="Employee Saved Successfuly")
+            
     else:
         return render_template("employees.html",message="Enter records to save employee")
+
+
+
+
+# CRUD
+# Retrieve/fetch records from the database
+@app.route("/get_employees",methods=['POST','GET'])
+def Get_employee():
+    #already defined connection, variable is connection
+    
+    # define the sql query-select
+    sql = 'select * from employees'
+    # create cursor function to execute sql query
+    cursor=connection.cursor()
+    # execute the sql query
+    cursor.execute(sql)
+    # check if there are records in the database
+    if cursor.rowcount==0:
+        response='No records to display'
+        return render_template("get_employees.html",message=response)
+    else:
+    #    fetch all the records 
+        employees=cursor.fetchall()
+        return render_template("get_employees.html",data=employees)
+        # represent the data using a table
+        
+    # API
+    
+    
+
+
+
+
+
+
+
+
+
 
 
 
