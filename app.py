@@ -1,7 +1,7 @@
 # python code(server)
 # Flask framework - lightweight python framework for creating webapplications
 # import flask 
-from flask import Flask,render_template,request
+from flask import *
 import pymysql
 import mysql.connector
 # create the main app
@@ -68,10 +68,18 @@ def save_employees():
         # get data from the form
         name=request.form['name']
         email=request.form['email']
+        password=request.form['password']
         course=request.form['course']
         university=request.form['university']
         # university=request.form.get("university")
-        
+        # check if image has been uploaded
+        if 'image' not in request.files:
+            return render_template("employees.html",message="Image not uploaded")
+       
+        image=request.files['image']
+        # store the image inside static folder
+        image.save('static/images/'+image.filename)
+        img_name=image.filename
         # Input validation
         if not name or not email or not course or not university:
             return render_template("employees.html",message="Please fill in all the records")
@@ -80,25 +88,21 @@ def save_employees():
             return render_template("employees.html",message="name must be two words")
         # check if employee exists
         sql ='select * from employees where email=%s'
-        cursor=connection.cursor()
-        cursor.execute(sql,email)
+        cursor=connection.cursor() 
+        cursor.execute(sql,email)  
         if cursor.rowcount==1:
             return render_template("employees.html",message="User already exists. Use a different email address or login")
         else:  
             # values=(30498,3,"Headphones","Nakuru")
             connection=pymysql.connect(host="localhost",user="root",password="",database="maxwell")
             # define the sql query
-            sql='insert into employees(name,email,course,university) values(%s,%s,%s,%s)'
-            # sql_orders='insert into orders(order_id,user_id,order_name,destination) values(%s,%s,%s,%s)'
+            sql='insert into employees(name,email,password,course,university,img_name) values(%s,%s,%s,%s,%s,%s)'
             # create cursor - used to execute the sql query
             cursor=connection.cursor() #function
             # execute sql
-            cursor.execute(sql,(name,email,course,university))
-            # cursor.execute(sql_orders,values)
-
+            cursor.execute(sql,(name,email,password,course,university,img_name))
             # commit the changes to the database
             connection.commit()
-            print("saved successfuly")
             # close the cursor
             cursor.close()
             return render_template("employees.html",response="Employee Saved Successfuly")
@@ -122,7 +126,7 @@ def Get_employee():
     # execute the sql query
     cursor.execute(sql)
     # check if there are records in the database
-    if cursor.rowcount==0:
+    if cursor.rowcount==0: 
         response='No records to display'
         return render_template("get_employees.html",message=response)
     else:
@@ -132,6 +136,35 @@ def Get_employee():
         # represent the data using a table
         
     # API
+# update route
+@app.route("/edit",methods=['POST','GET'])
+def Edit():
+    # check if data has been posted
+    if request.method=='POST':
+        # get the posted data
+        user_id=request.form.get("user_id")
+        Email=request.form.get("email")
+        # connection defined
+        # create the cursor function
+        edit_cursor=connection.cursor()
+        sql='update employees set email=%s where user_id=%s'
+        
+        sql_check='select user_id from employees where user_id=%s'
+        check_cursor=connection.cursor()
+        check_cursor.execute(sql_check,userid)
+        record=check_cursor.fetchone()
+        # chek if user id exists
+        if check_cursor.rowcount ==0:
+            return render_template("edit.html",message="User_id does not exist")
+        else:
+            # execute the sql query
+            edit_cursor.execute(sql,(Email,user_id))
+            # commit the changes
+            connection.commit()
+            return render_template("edit.html",message="Email updated successfully")
+    else:
+        return render_template("edit.html")
+    
     
     
 

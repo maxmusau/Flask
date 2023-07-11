@@ -10,18 +10,28 @@
     
     <div class="container"> 
         <section class="row">
-            {% for employee in data %}
-            <div class="col-md-4 mb-2">
-                <div class="card shadow p-2">
-                    <h3>Name: {{employee[1]}}</h3>
-                    <p><b>Email</b> {{employee[2]}}</p>
-                    <p><b>Course</b> {{employee[3]}}</p>
-                    <p><b>University</b> {{employee[4]}}</p>
+            
+          
+                <table class="table">
+                    <tr class="bg-info">
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>University</th>
+                    </tr>
+                    {% for employee in data %}
+                    <tr class="bg-secondary text-white" >
+                        <td>{{employee[1]}}</td>
+                        <td>{{employee[2]}}</td>
+                        <td>{{employee[3]}}</td>
+                        <td>{{employee[4]}}</td>
 
-                </div>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
             <!-- close the for loop -->
-            {% endfor %}
+            
 
         </section>
 

@@ -16,22 +16,28 @@
         <br>
 
         <div class="">
-            
+
             <div class="" style="margin: 0 auto;width:450px;">
                 <div class="card shadow p-2">
                     <i class="text-info text-center">{{response}}</i>
                     <h4 class="text-danger">{{message}}</h4>
-                    <form action="/save_employee" method="post" class="p-3">
+                    <form action="/save_employee" method="post" class="p-3" enctype="multipart/form-data">
                         <input type="text" name="name" class="form-control mb-2
                             p-2" placeholder="Enter Your name">
                         <input type="email" name="email" class="form-control
                             mb-2
                             p-2" placeholder="Enter Email">
+                        <input type="password" name="password"
+                            class="form-control
+                            mb-2
+                            p-2" placeholder="Enter Password">
                         <input type="text" name="course" class="form-control
                             mb-2
                             p-2" placeholder="Enter Course">
                         <input type="text" name="university" class="form-control
                             mb-2 p-2" placeholder="enter University">
+                        <input type="file" name="image" required
+                            class="form-control mb-2">
                         <input type="submit" class="btn btn-success w-50 ms-5"
                             value="SAVE">
                     </form>
