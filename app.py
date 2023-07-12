@@ -76,7 +76,7 @@ def save_employees():
         if 'image' not in request.files:
             return render_template("employees.html",message="Image not uploaded")
        
-        image=request.files['image']
+        image=request.files['image'] #get image from the form
         # store the image inside static folder
         image.save('static/images/'+image.filename)
         img_name=image.filename
@@ -179,5 +179,5 @@ def Edit():
 
 
 
-app.run(debug=True)
+app.run(debug=True,port=8080)
               
